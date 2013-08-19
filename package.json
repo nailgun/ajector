@@ -1,0 +1,35 @@
+{
+  "name": "ajector",
+  "version": "1.0.0",
+  "description": "Asynchronous dependency injector",
+  "homepage": "https://github.com/nailgun/ajector",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test --reporter spec --require should"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nailgun/ajector.git"
+  },
+  "keywords": [
+    "di",
+    "dependency",
+    "injector",
+    "injection",
+    "asynchronous"
+  ],
+  "dependencies": {
+    "callstack": "",
+    "underscore": "",
+    "async": ""
+  },
+  "devDependencies": {
+    "mocha": "",
+    "should": ""
+  },
+  "author": "Dmitry Bashkatov <dbashkatov@gmail.com>",
+  "license": "MIT"
+}
