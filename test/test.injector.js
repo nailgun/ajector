@@ -19,6 +19,21 @@ describe('ajector([serviceDirs])', function () {
         done();
       });
     });
+
+    it('should not modify parent injector', function (done) {
+      var app = ajector();
+      var s1 = {name: 'service1'};
+      app.instance('service1', s1);
+
+      var child = ajector(app);
+      var s2 = {name: 'service1', field: true};
+      child.instance('service1', s2);
+
+      app.inject(function (service1) {
+        service1.should.equal(s1);
+        done();
+      });
+    });
   });
 
   describe('.factory(name, factory)', function () {
@@ -48,6 +63,28 @@ describe('ajector([serviceDirs])', function () {
         service1.name.should.equal('hello');
         service1.age.should.equal(24);
         done();
+      });
+    });
+
+    it('should not modify parent injector', function (done) {
+      var app = ajector();
+      var s1 = {name: 'service1'};
+      app.factory('service1', function () {
+        return s1;
+      });
+
+      var child = ajector(app);
+      var s2 = {name: 'service1', field: true};
+      child.factory('service1', function () {
+        return s2;
+      });
+
+      child.inject(function (service1) {
+        service1.should.equal(s2);
+        app.inject(function (service1) {
+          service1.should.equal(s1);
+          done();
+        });
       });
     });
   });
@@ -129,6 +166,23 @@ describe('ajector([serviceDirs])', function () {
 
       app.inject(fn, {
         service1: 'mock'
+      });
+    });
+
+    it('should resolve dependencies from parent injector', function (done) {
+      var app = ajector();
+
+      var s1 = {
+        name: 'service1'
+      };
+
+      app.instance('service1', s1);
+
+      debugger;
+      var child = ajector(app);
+      child.inject(function (service1) {
+        service1.should.equal(s1);
+        done();
       });
     });
 
