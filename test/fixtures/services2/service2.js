@@ -1,3 +1,5 @@
 module.exports = function () {
-    this.name = 'hello2';
+  return {
+    name: 'hello2'
+  }
 };

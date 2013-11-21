@@ -33,23 +33,6 @@ describe('Ajector([serviceDirs])', function () {
         done();
       });
     });
-
-    it('should use `new` on `factory`', function (done) {
-      var app = new Ajector();
-
-      var Ctor = function () {
-        this.name = 'hello';
-      };
-      Ctor.prototype.age = 24;
-
-      app.factory('service1', Ctor);
-
-      app.inject(function (service1) {
-        service1.name.should.equal('hello');
-        service1.age.should.equal(24);
-        done();
-      });
-    });
   });
 
   describe('.inject(fn, [locals], [callback])', function () {
