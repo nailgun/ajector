@@ -154,25 +154,6 @@ describe('ajector([serviceDirs])', function () {
         service1: 'mock'
       });
     });
-
-    // TODO: remove
-    describe('.instances', function () {
-      it('should contain all instanciated objects', function () {
-        var app = ajector();
-        var s1 = {name: 'service1'};
-        var s2 = {name: 'service2'};
-        app.instance('service1', s1);
-        app.instance('service2', s2);
-        app.inject(function (inject, service1, service2) {
-          var instances = inject.instances;
-          instances.should.eql({
-            service1: s1,
-            service2: s2,
-            inject: inject
-          });
-        });
-      });
-    });
   });
 
   describe('when calling factory', function () {
