@@ -156,6 +156,75 @@ describe('Ajector([serviceDirs])', function () {
     });
   });
 
+  describe('.inject(factories, [locals], [callback])', function () {
+    it('should resolve dependencies between factories', function (done) {
+      var app = new Ajector();
+
+      var s1 = { name: 'service1' };
+      var s2 = { name: 'service2' };
+
+      app.inject({
+        service1: function (service2) {
+          service2.should.equal(s2);
+          return s1;
+        },
+        service2: function () {
+          return s2;
+        }
+      }, function () {
+        done();
+      });
+    });
+
+    it('should pass services map to callback', function (done) {
+      var app = new Ajector();
+
+      var s1 = { name: 'service1' };
+      var s2 = { name: 'service2' };
+
+      app.inject({
+        service1: function (service2) {
+          service2.should.equal(s2);
+          return s1;
+        },
+        service2: function () {
+          return s2;
+        }
+      }, function (map) {
+        map.service1.should.equal(s1);
+        map.service2.should.equal(s2);
+        done();
+      });
+    });
+
+    it('should not pass factories further then factories', function (done) {
+      var app = new Ajector();
+
+      var originalAppService2 = { name: 'appService2' };
+      app.instance('appService2', originalAppService2);
+
+      var originalAppService = { name: 'appService' };
+      app.factory('appService', function (appService2) {
+        appService2.should.equal(originalAppService2);
+        return originalAppService;
+      });
+
+      var s2 = { name: 's2' };
+
+      app.inject({
+        service: function (appService, appService2) {
+          appService.should.equal(appService);
+          appService2.should.equal(s2);
+        },
+        appService2: function () {
+          return s2;
+        }
+      }, function () {
+        done();
+      });
+    });
+  });
+
   describe('when calling factory', function () {
     it('should inject dependencies to factory function', function (done) {
       var app = new Ajector();
