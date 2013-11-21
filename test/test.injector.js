@@ -225,7 +225,7 @@ describe('Ajector([serviceDirs])', function () {
       var app = new Ajector();
       app.factory('service1', function (service2, callback) {
         service2.name.should.equal('service2');
-        callback.should.be.a('function');
+        callback.should.be.a.function;
         done();
         return {name: 'service1'};
       });
