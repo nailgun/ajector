@@ -1,13 +1,13 @@
 'use strict';
 
-var ajector = require('../index'),
+var Ajector = require('../index'),
     should = require('should'),
     async = require('async');
 
-describe('ajector([serviceDirs])', function () {
+describe('Ajector([serviceDirs])', function () {
   describe('.instance(name, obj)', function () {
     it('should register `obj` for injection under name `name`', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       var s1 = {name: 'service1'};
       var s2 = function (arg) {};
 
@@ -23,7 +23,7 @@ describe('ajector([serviceDirs])', function () {
 
   describe('.factory(name, factory)', function () {
     it('should register `factory` as constructor for injection `name`', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       var s1 = {name: 'service1'};
       app.factory('service1', function () {
         return s1;
@@ -35,7 +35,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should use `new` on `factory`', function (done) {
-      var app = ajector();
+      var app = new Ajector();
 
       var Ctor = function () {
         this.name = 'hello';
@@ -54,7 +54,7 @@ describe('ajector([serviceDirs])', function () {
 
   describe('.inject(fn, [locals], [callback])', function () {
     it('should resolve injections by argument names', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       app.instance('service1', {name: 'service1'});
       app.instance('service2', {name: 'service2'});
 
@@ -71,7 +71,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should load factories from dirs specified in constructor argument', function (done) {
-      var app = ajector(__dirname + '/fixtures/services1', __dirname + '/fixtures/services2');
+      var app = new Ajector(__dirname + '/fixtures/services1', __dirname + '/fixtures/services2');
 
       app.inject(function (exampleService, service2) {
         exampleService.name.should.equal('hello');
@@ -81,7 +81,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should call callback with return value of fn', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       app.instance('service1', {name: 'service1'});
       app.inject(function (service1) {
         return {
@@ -96,7 +96,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should resolve instances in `locals`', function (done) {
-      var app = ajector();
+      var app = new Ajector();
 
       var a = [1, 2, 3];
 
@@ -111,7 +111,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should not pass `locals` further then calling function', function (done) {
-      var app = ajector();
+      var app = new Ajector();
 
       var s1 = { name: 'service1' };
       app.factory('service1', function (service2) {
@@ -137,7 +137,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should not modify injector with `locals`', function (done) {
-      var app = ajector();
+      var app = new Ajector();
 
       var s1 = { name: 'service1' };
       app.instance('service1', s1);
@@ -158,7 +158,7 @@ describe('ajector([serviceDirs])', function () {
 
   describe('when calling factory', function () {
     it('should inject dependencies to factory function', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       app.factory('service1', function (service2) {
         service2.name.should.equal('service2');
         done();
@@ -170,7 +170,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should interpret special constructor callback argument', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       app.factory('service1', function (service2, callback) {
         service2.name.should.equal('service2');
         callback.should.be.a('function');
@@ -183,7 +183,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should wait until factory callback is called', function (done) {
-      var app = ajector();
+      var app = new Ajector();
       var initialized = false;
 
       app.factory('service1', function (callback) {
@@ -201,7 +201,7 @@ describe('ajector([serviceDirs])', function () {
     });
 
     it('should throw if callback is called with error', function () {
-      var app = ajector();
+      var app = new Ajector();
       app.factory('service1', function (callback) {
         callback(new Error('error'));
         return {};
@@ -214,7 +214,7 @@ describe('ajector([serviceDirs])', function () {
   });
 
   it('should drop surrounding _underscores_ from injection name', function (done) {
-    var app = ajector();
+    var app = new Ajector();
     app.instance('service1', {name: 'service1'});
     app.instance('service2', {name: 'service2'});
 
@@ -226,7 +226,7 @@ describe('ajector([serviceDirs])', function () {
   });
 
   it('should create only one instance of injection [1]', function (done) {
-    var app = ajector();
+    var app = new Ajector();
     var initialized = false;
     var initialized2 = false;
 
@@ -253,7 +253,7 @@ describe('ajector([serviceDirs])', function () {
   });
 
   it('should create only one instance of injection [2]', function (done) {
-    var app = ajector();
+    var app = new Ajector();
     var initialized = false;
 
     app.factory('service1', function (callback) {
@@ -277,7 +277,7 @@ describe('ajector([serviceDirs])', function () {
   });
 
   it('should create only one instance of injection [3]', function (done) {
-    var app = ajector();
+    var app = new Ajector();
     var initialized = false;
     var validOrder = false;
 
@@ -309,7 +309,7 @@ describe('ajector([serviceDirs])', function () {
   });
 
   it('should provide `inject` injection', function (done) {
-    var app = ajector();
+    var app = new Ajector();
     app.factory('service1', function (inject) {
       inject(function (service2) {
         service2.name.should.equal('service2');
