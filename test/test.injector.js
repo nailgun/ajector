@@ -19,21 +19,6 @@ describe('ajector([serviceDirs])', function () {
         done();
       });
     });
-
-    it('should not modify parent injector', function (done) {
-      var app = ajector();
-      var s1 = {name: 'service1'};
-      app.instance('service1', s1);
-
-      var child = ajector(app);
-      var s2 = {name: 'service1', field: true};
-      child.instance('service1', s2);
-
-      app.inject(function (service1) {
-        service1.should.equal(s1);
-        done();
-      });
-    });
   });
 
   describe('.factory(name, factory)', function () {
@@ -63,28 +48,6 @@ describe('ajector([serviceDirs])', function () {
         service1.name.should.equal('hello');
         service1.age.should.equal(24);
         done();
-      });
-    });
-
-    it('should not modify parent injector', function (done) {
-      var app = ajector();
-      var s1 = {name: 'service1'};
-      app.factory('service1', function () {
-        return s1;
-      });
-
-      var child = ajector(app);
-      var s2 = {name: 'service1', field: true};
-      child.factory('service1', function () {
-        return s2;
-      });
-
-      child.inject(function (service1) {
-        service1.should.equal(s2);
-        app.inject(function (service1) {
-          service1.should.equal(s1);
-          done();
-        });
       });
     });
   });
@@ -147,12 +110,37 @@ describe('ajector([serviceDirs])', function () {
       });
     });
 
+    it('should not pass `locals` further then calling function', function (done) {
+      var app = ajector();
+
+      var s1 = { name: 'service1' };
+      app.factory('service1', function (service2) {
+        service2.should.equal(s2);
+        return s1;
+      });
+
+      var s2 = { name: 'service2' };
+      app.instance('service2', s2);
+
+      var fn = function (service1, service2, inject) {
+        service2.should.equal('mock');
+
+        inject(function (service2) {
+          service2.should.equal(s2);
+          done();
+        });
+      };
+
+      app.inject(fn, {
+        service2: 'mock'
+      });
+    });
+
     it('should not modify injector with `locals`', function (done) {
       var app = ajector();
 
-      var s1 = {
-        name: 'service1'
-      };
+      var s1 = { name: 'service1' };
+      app.instance('service1', s1);
 
       var fn = function (service1) {
         service1.should.equal('mock');
@@ -162,30 +150,12 @@ describe('ajector([serviceDirs])', function () {
         });
       };
 
-      app.instance('service1', s1);
-
       app.inject(fn, {
         service1: 'mock'
       });
     });
 
-    it('should resolve dependencies from parent injector', function (done) {
-      var app = ajector();
-
-      var s1 = {
-        name: 'service1'
-      };
-
-      app.instance('service1', s1);
-
-      debugger;
-      var child = ajector(app);
-      child.inject(function (service1) {
-        service1.should.equal(s1);
-        done();
-      });
-    });
-
+    // TODO: remove
     describe('.instances', function () {
       it('should contain all instanciated objects', function () {
         var app = ajector();
@@ -369,28 +339,5 @@ describe('ajector([serviceDirs])', function () {
     app.instance('service2', {name: 'service2'});
 
     app.inject(function (service1) {});
-  });
-
-  describe('injection `inject`', function () {
-    it('should inherit locals in original inject', function (done) {
-      var app = ajector();
-
-      var a = [1, 2, 3];
-      var a2 = [4, 5, 6];
-
-      var fn = function (inject) {
-        inject(function (args, args2) {
-          args.should.equal(args);
-          args2.should.equal(args2);
-          done();
-        }, {
-          args2: a2
-        });
-      };
-
-      app.inject(fn, {
-        args: a
-      });
-    });
   });
 });
