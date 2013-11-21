@@ -373,4 +373,23 @@ describe('Ajector([serviceDirs])', function () {
 
     app.inject(function (service1) {});
   });
+
+  describe('.instances', function () {
+    it('should contain all instanciated objects', function () {
+      var app = new Ajector();
+
+      var s1 = {name: 'service1'};
+      var s2 = {name: 'service2'};
+      app.instance('service1', s1);
+      app.instance('service2', s2);
+
+      app.inject(function (inject, service1, service2) {
+        app.instances.should.eql({
+          service1: s1,
+          service2: s2,
+          inject: inject
+        });
+      });
+    });
+  });
 });
