@@ -4,7 +4,7 @@ var ajector = require('../index'),
     should = require('should'),
     async = require('async');
 
-describe('ajector([serviceDir])', function () {
+describe('ajector([serviceDirs])', function () {
   describe('.instance(name, obj)', function () {
     it('should register `obj` for injection under name `name`', function (done) {
       var app = ajector();
@@ -220,7 +220,7 @@ describe('ajector([serviceDir])', function () {
     });
   });
 
-  it('should create only one instance of injection', function (done) {
+  it('should create only one instance of injection [1]', function (done) {
     var app = ajector();
     var initialized = false;
     var initialized2 = false;
@@ -247,7 +247,7 @@ describe('ajector([serviceDir])', function () {
     });
   });
 
-  it('should create only one instance of injection 2', function (done) {
+  it('should create only one instance of injection [2]', function (done) {
     var app = ajector();
     var initialized = false;
 
@@ -271,7 +271,7 @@ describe('ajector([serviceDir])', function () {
     }], done);
   });
 
-  it('should create only one instance of injection 3', function (done) {
+  it('should create only one instance of injection [3]', function (done) {
     var app = ajector();
     var initialized = false;
     var validOrder = false;
